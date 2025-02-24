@@ -24,7 +24,7 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-            az storage file upload-batch --destination ${{ secrets.AZURESTORAGE_FILE_SHARE_URL_PROD }} --source .
+            az storage file upload-batch --destination ${{ secrets.AZURESTORAGE_FILE_SHARE_NAME_PROD }} --source . --account-name ${{ secrets.AZURESTORAGE_ACCOUNT_NAME }}
 
   # Azure logout
     - name: logout
