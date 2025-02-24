@@ -1,0 +1,32 @@
+name: Deploy content to Azure File Share
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read #This is required for actions/checkout
+    steps:
+    - uses: actions/checkout@v4
+    - uses: azure/login@v2
+      with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+
+    - name: Upload to file storage
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+            az storage file upload-batch --destination ${{ secrets.AZURESTORAGE_FILE_SHARE_NAME_PROD }} --source . --account-name ${{ secrets.AZURESTORAGE_ACCOUNT_NAME }}
+
+  # Azure logout
+    - name: logout
+      run: |
+            az logout
+      if: always()
